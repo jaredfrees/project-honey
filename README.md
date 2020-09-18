@@ -1,9 +1,9 @@
 # Project Honey
 
 Team members:
-Jared Frees
+Jared Frees,
+Zach Cusick,
 Brian Fissel
-Zach Cusick
 
 
 
