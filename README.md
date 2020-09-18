@@ -5,6 +5,8 @@ Jared Frees
 Brian Fissel
 Zach Cusick
 
+
+
 ### Motivation
 We want to focus on making a honeypot because we want to set some up on our own networks to see if any hackers are trying to get information about our networks or break in somehow. I think it would be interesting to detect internet bots scraping the web and see where they come from based on IP.
 
