@@ -13,6 +13,6 @@ We want to focus on making a honeypot because we want to set some up on our own 
 ### Problem Statement
 We are going to design a honeypot to detect malicious actors spying on a network. The challenges we face are protecting a network from hackers looking for vulnerabilities. 
 
-### The plan
+### The Plan
 We will create a honeypot most likely in Python that will mimic real network services. Some services we will probably recreate are HTTP, FTP, SSH, and SMTP.
 
