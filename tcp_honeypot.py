@@ -4,9 +4,21 @@ import socket
 import sys
 import time
 import os
-
+import socketserver
+import threading
 #TODO for future maybe make multithreaded, on-blocking sockets?
 
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
+
+    def handle(self):
+        data = self.request.recv(1024)
+        cur_thread = threading.current_thread()
+        response = "{}: {}".format(cur_thread.name, data.decode('utf-8'))
+        b = response.encode('utf-8')
+        self.request.sendall(b)        
+
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
 
 def log(address, data):
   sep = '-' * 50
@@ -21,6 +33,18 @@ def run_pot():
   host = ''
   port = 25565
 
+  server = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
+  ip, port = server.server_address
+
+  # Start a thread with the server -- that thread will then start one
+  # more thread for each request
+  server_thread = threading.Thread(target=server.serve_forever(0.5))
+  # Exit the server thread when the main thread terminates
+  server_thread.daemon = True
+  server_thread.start()
+  
+
+"""
   # create socket object
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   # tell computer to give me this port
@@ -50,7 +74,7 @@ def run_pot():
   except socket.error as e:
     print("Caught exception:", e)
     sys.exit(1)
-
+"""
 
 def main():
   try:
