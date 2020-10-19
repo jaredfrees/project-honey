@@ -1,11 +1,6 @@
 # Project Honey
 
-If you run `python .\tcp_honeypot.py` then `python .\test_client.py` you should see some output. This is just a start and isn't much of a honeypot yet but it shows the socket basics in Python.
-
-For an HTTP server, look at: 
-https://docs.python.org/3/library/http.server.html
-https://github.com/bocajspear1/honeyhttpd/blob/master/honeyhttpd/lib/server.py
-
+If you run `python .\tcp_honeypot.py` then `python .\test_client.py` you should see some output.
 
 
 <br/><br/>
