@@ -1,4 +1,4 @@
-# Author: Jared Frees
+# Author: Jared Frees, Zach Cusick
 
 import socket
 import sys
@@ -12,10 +12,15 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         data = self.request.recv(1024)
+        address = self.client_address
         cur_thread = threading.current_thread()
-        response = "{}: {}".format(cur_thread.name, data.decode('utf-8'))
+        data = data.decode('utf-8')
+        response = "{}: {}".format(cur_thread.name, "Hello world this is a pot")
+        log(address, data)
+        print("On ", cur_thread.name," connected to: ", address[0], ":", address[1], sep='')
         b = response.encode('utf-8')
-        self.request.sendall(b)        
+        self.request.sendall(b)
+               
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
@@ -43,39 +48,6 @@ def run_pot():
   server_thread.daemon = True
   server_thread.start()
   
-
-"""
-  # create socket object
-  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  # tell computer to give me this port
-  s.bind((host, port))
-  # listen for connections, max 100 connections at a time
-  s.listen(100)
-  print('Bound to port:', port)
-  print('Waiting for connection...')
-
-  #while True:
-  (new_conn, address) = s.accept()
-  print("Connected to: ", address[0], ":", address[1], sep='')
-
-  try:
-    # Send message to connected computer
-    new_conn.send(b"Hello world this is a pot\n")
-
-    # Receive data from connected computer
-    data = new_conn.recv(1024)
-    data = data.decode('utf-8')
-    print("Data:", data)
-    log(address, data)
-
-    # TODO: try to get info about connected computer?
-
-
-  except socket.error as e:
-    print("Caught exception:", e)
-    sys.exit(1)
-"""
-
 def main():
   try:
     run_pot()
