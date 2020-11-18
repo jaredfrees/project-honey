@@ -1,4 +1,4 @@
-# Author: Jared Frees, Zach Cusick
+# Author:Zach Cusick
 
 import socket
 import sys
@@ -7,24 +7,22 @@ import os
 import socketserver
 import threading
 import http.server
-#TODO for future maybe make multithreaded, on-blocking sockets?
 
-#class ThreadedTCPRequestHandler(http.server.BaseHTTPRequestHandler):
+file = open("project-honey/HomePage.html", "r")
+class ThreadedHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
+    
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(bytes(file.read(), "utf-8"))
+        address = self.client_address
+        data = "GET request version: " + self.request_version
+        log(address, data)
+                      
 
-    # def handle(self):
-    #     data = self.request.recv(1024)
-    #     address = self.client_address
-    #     cur_thread = threading.current_thread()
-    #     data = data.decode('utf-8')
-    #     response = "{}: {}".format(cur_thread.name, "Hello world this is a pot")
-    #     log(address, data)
-    #     print("On ", cur_thread.name," connected to: ", address[0], ":", address[1], sep='')
-    #     b = response.encode('utf-8')
-    #     self.request.sendall(b)
-               
-
-# class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-#     pass
+class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+     pass
 
 def log(address, data):
   sep = '-' * 50
@@ -39,7 +37,7 @@ def run_pot():
   host = ''
   port = 80
 
-  server = http.server.ThreadingHTTPServer((host, port), http.server.BaseHTTPRequestHandler)
+  server = ThreadedHTTPServer((host, port), ThreadedHTTPRequestHandler)
   ip, port = server.server_address
 
   # Start a thread with the server -- that thread will then start one
