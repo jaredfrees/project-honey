@@ -1,4 +1,5 @@
 # Author:Zach Cusick
+# You can connect to the server via opening your browser and typing in the ip, ex. 127.0.0.1 for self reference
 
 import socket
 import sys
