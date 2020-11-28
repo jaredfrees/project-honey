@@ -16,7 +16,7 @@ class ThreadedHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        file = open("project-honey/HomePage.html", "r")
+        file = open("./http/HomePage.html", "r")
         self.wfile.write(bytes(file.read(), "utf-8"))
         address = self.client_address
         data = "GET request version: " + self.request_version
@@ -35,7 +35,7 @@ class ThreadedHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
       post_data = self.rfile.read(content_length)
       post_data = "Data: " + post_data.decode("utf-8")
       data = "POST request version: " + self.request_version + "\nUser-Agent: " + self.headers['User-Agent'] + "\n"
-      file = open("project-honey/HomePage.html", "r")
+      file = open("./http/HomePage.html", "r")
       self.wfile.write(bytes(file.read(), "utf-8"))
       address = self.client_address
       log(address, data + post_data)
@@ -46,7 +46,7 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 def log(address, data):
   sep = '-' * 50
-  with open('./HTTPlog.txt', 'a') as file:
+  with open('./http/logs/http.log', 'a') as file:
     file.write('Time: {}\nIP: {}\nPort: {}\nRequest: {}\n'.format(time.ctime(), address[0], address[1], data))
     file.write(sep + '\n')
 

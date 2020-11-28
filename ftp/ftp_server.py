@@ -1,3 +1,4 @@
+# Author: Jared Frees
 # INSTALL: pip3 install pyftpdlib
 # Testing command: ftp <ip-address> <port-number>
 #                  ftp 127.0.0.1 21
@@ -10,7 +11,7 @@ import logging
 
 # Get config
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('./ftp/config.ini')
 section = 'DEFAULT'
 FTP_PORT = config[section]['ftp_port']
 FTP_USER = config[section]['ftp_user']
@@ -29,7 +30,7 @@ handler.authorizer = authorizer
 
 handler.banner = "Welcome to the FTP Server :)"
 
-logging.basicConfig(filename='./logs/ftp.log', level=logging.DEBUG)
+logging.basicConfig(filename='./ftp/logs/ftp.log', level=logging.DEBUG)
 
 server = ThreadedFTPServer(('127.0.0.1', FTP_PORT), handler)
 server.max_cons = 10

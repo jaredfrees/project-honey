@@ -27,7 +27,7 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 def log(address, data):
   sep = '-' * 50
-  with open('./logs/minecraft_tcp.log', 'a') as file:
+  with open('./tcp/logs/minecraft_tcp.log', 'a') as file:
     file.write('Time: {}\nIP: {}\nPort: {}\nData: {}\n'.format(time.ctime(), address[0], address[1], data))
     file.write(sep + '\n')
 
