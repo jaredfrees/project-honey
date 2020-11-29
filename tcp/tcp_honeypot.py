@@ -34,12 +34,11 @@ def log(address, data):
 
 # Opens tcp port and listens for connections
 def run_pot():
-  print("Starting tcp honeypot...")
   host = ''
   port = 25565
+  print("Starting tcp honeypot on port ", port, "...", sep="")
 
   server = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
-  ip, port = server.server_address
 
   # Start a thread with the server -- that thread will then start one
   # more thread for each request

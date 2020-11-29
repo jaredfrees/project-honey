@@ -9,7 +9,11 @@ a decoy folder where they can see some test files and make real FTP commands.
 Making this a high interaction honeypot allows us to see how a real
 attacker would act and what commands would be run when they think they
 are inside a real computer system. This allows for more in depth analysis of
-an attackers methods.
+an attackers methods. Since this is an emulated FTP server this is probably considered
+a medium interaction honeypot. This comes with more risks than a low interaction
+honeypot because attackers are actually connected to the computer and can run commands.
+Special care needs to be taken to ensure attackers cannot compromise the system while connected.
+This of course comes with more risk but allows for more data to be collected.
 """
 
 from pyftpdlib.authorizers import DummyAuthorizer
