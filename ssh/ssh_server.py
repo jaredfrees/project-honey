@@ -1,4 +1,5 @@
-# Author: Jared Frees, Zach Cusick
+# Author: Jared Frees
+# Testing: ssh -p 2222 127.0.0.1
 """
 SSH server that accepts connections and immediately closes them to
 protect against users trying to break in. This program reads the first line

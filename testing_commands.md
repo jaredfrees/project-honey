@@ -5,7 +5,7 @@ ssh -p 2222 127.0.0.1
 http://127.0.0.1
 
 ### FTP
-ftp 127.0.0.1
+ftp 127.0.0.1 21
 
 ### TCP 
 python test_client.py
