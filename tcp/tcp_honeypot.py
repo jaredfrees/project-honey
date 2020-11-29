@@ -34,7 +34,7 @@ def log(address, data):
 
 # Opens tcp port and listens for connections
 def run_pot():
-  print("Starting honeypot...")
+  print("Starting tcp honeypot...")
   host = ''
   port = 25565
 

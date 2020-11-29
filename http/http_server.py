@@ -53,7 +53,7 @@ def log(address, data):
 
 # Opens tcp port and listens for connections
 def run_pot():
-  print("Starting honeypot...")
+  print("Starting http honeypot...")
   host = ''
   port = 80
 
