@@ -1,5 +1,13 @@
 # Author: Jared Frees, Zach Cusick
-# pip3 install paramiko
+"""
+SSH server that accepts connections and immediately closes them to
+protect against users trying to break in. This program reads the first line
+of the SSH connection to get the client SSH version and logs the version.
+This is a low interaction, passive honeypot which means it does not give
+the attacker any real access to the computer system, it simply allows a connection
+and then closes it so the attacker does not think they actually broke into
+an SSH system.
+"""
 
 import socket
 import sys
