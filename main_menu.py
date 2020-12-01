@@ -1,44 +1,76 @@
-#Author: Brian Fissel
-#import importlib
+#Author: Brian Fissel, Jared Frees
 
 import ftp.ftp_server
 import httpServer.http_server
 import tcp.tcp_honeypot
 import ssh.ssh_server
 import time
+import sys
 
 def get_valid_int():
-    try:
-        choice = input("Please Select an Option by Typing in a Number and Pressing Enter: ")
-        choice = int(choice)
-    except ValueError:
-        choice = 0
-    return choice
+  try:
+    #choice = input("Please Select an Option by Typing in a Number and Pressing Enter: ")
+    choice = input()
+    choice = int(choice)
+    print()
+    time.sleep(.25)
+  except ValueError:
+    choice = 0
+  return choice
 
-def main():
+
+class MainMenu:
+  def __init__(self):
+    self.tcp_server = tcp.tcp_honeypot.TcpHoneypot()
+    self.ssh_server = ssh.ssh_server.SshServer()
+    self.ftp_server = ftp.ftp_server.FtpServer()
+    self.http_server = httpServer.http_server.HttpServer()
+    self.servers = [self.ftp_server, self.tcp_server, self.http_server, self.ssh_server]
+
+  def print_menu(self):
+    print('Please choose a selection:')
+
+    for i, server in enumerate(self.servers, start=1):
+      if server.is_running:
+        print(i, '. (Active) ', server.name, ' Honeypot', sep='')
+      else:
+        print(i, '. (Not Active) ', server.name, ' Honeypot', sep='')
+  
+  def check_valid_selection(self, num):
+    if self.servers[num - 1].is_running:
+      print(self.servers[num - 1].name, 'server is already running')
+      return 0
+    else:
+      return num
+
+  def main(self):
     print("Welcome to our Honeypot!")
     print("----------------------------------------------------------------")
-    print("1. FTP Honeypot")
-    print("2. TCP Honeypot")
-    print("3. HTTP Honeypot")
-    print("4. SSH Honeypot")
     
-    choice = get_valid_int()
-    if choice == 1:
-        ftp.ftp_server.main()
-        #I am getting an error reading the ftp_port, check that, might need to put ftp in a main method.
-        print("FTP")
-    elif choice == 2:
-        tcp.tcp_honeypot.main()
-    elif choice == 3:
-        httpServer.http_server.main()
-    elif choice == 4:
-        ssh.ssh_server.main()
-    else:
+    while True:
+      self.print_menu()
+
+      choice = self.check_valid_selection(get_valid_int())
+      if choice == 1:
+        self.ftp_server.run_pot()
+      elif choice == 2:
+        self.tcp_server.run_pot()
+      elif choice == 3:
+        self.http_server.run_pot()
+      elif choice == 4:
+        self.ssh_server.run_pot()
+      else:
         print("Not a valid selection")
-        time.sleep(.5)
-        print('')
-        main()
-        
+      
+      time.sleep(.5)
+      print('')
+      
+
+
 if __name__ == "__main__":
-    main()
+  try:
+    main_menu = MainMenu()
+    main_menu.main()
+  except KeyboardInterrupt:
+    print('Exiting program')
+    sys.exit(1)

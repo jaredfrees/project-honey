@@ -7,6 +7,7 @@ import time
 import os
 import socketserver
 import threading
+from common.common import HoneypotBaseServer
 
 class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
@@ -25,10 +26,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         # Look for response
         data = self.request.recv(1024).decode('utf-8').rstrip()
         log(address, data)
-        
-        
-        
-               
+                       
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
@@ -42,26 +40,42 @@ def log(address, data):
       file.write('Time: {}\nAddress: {}:{}\nData: {}\n'.format(time.ctime(), address[0], address[1], data))
     file.write(sep + '\n')
 
+class TcpHoneypot(HoneypotBaseServer):
+  def __init__(self, host='', port=25565):
+    HoneypotBaseServer.__init__(self, 'TCP Minecraft')
+    self.server = None
+    self.server_thread = None
+    self.host = host
+    self.port = port
 
-# Opens tcp port and listens for connections
-def run_pot():
-  host = ''
-  port = 25565
-  print("Starting Minecraft TCP honeypot on port ", port, "...", sep="")
+  # Opens tcp port and listens for connections
+  def run_pot(self):
+    print("Starting Minecraft TCP honeypot on port ", self.port, "...", sep="")
 
-  server = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
+    self.server = ThreadedTCPServer((self.host, self.port), ThreadedTCPRequestHandler)
 
-  # Start a thread with the server -- that thread will then start one
-  # more thread for each request
-  print('TCP server started')
-  server_thread = threading.Thread(target=server.serve_forever(0.5))
-  # Exit the server thread when the main thread terminates
-  server_thread.daemon = True
-  server_thread.start()
-  
+    # Start a thread with the server -- that thread will then start one
+    # more thread for each request
+    self.is_running = True
+    print('TCP server started')
+    self.server_thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+    # Exit the server thread when the main thread terminates
+    self.server_thread.start()
+    
+  # TODO: Doesn't work...
+  def stop_pot(self):
+    print('thread:', self.server_thread)
+    #self.server_thread.join()
+    #print('join stopped')
+    #print('isalive:', self.server_thread.is_alive())
+
+    self.server.shutdown()
+
+
 def main():
   try:
-    run_pot()
+    server = TcpHoneypot()
+    server.run_pot()
   except KeyboardInterrupt:
     print('Closing TCP server...')
     sys.exit(1)

@@ -15,7 +15,7 @@ import sys
 import time
 import os
 import threading
-import errno
+from common.common import HoneypotBaseServer
 
 def log(address, data):
   sep = '-' * 50
@@ -23,45 +23,44 @@ def log(address, data):
     file.write('Time: {}\nAddress: {}:{}\nClient SSH Version: {}\n'.format(time.ctime(), address[0], address[1], data))
     file.write(sep + '\n')
 
-def handle_ssh_connection(client_sock, addr):
-  
-  client_version = client_sock.recv(1024).decode('ascii').rstrip()
+class SshServer(HoneypotBaseServer):
+  def __init__(self):
+    HoneypotBaseServer.__init__(self, 'SSH')
 
-  print('Client connected with address:', addr)
-  log(addr, client_version)
-  client_sock.close()
-   
-# Opens tcp port and listens for connections
-def run_pot():
-  host = ''
-  port = 2222
-  print("Starting SSH honeypot on port ", port, "...", sep='')
-  
-  try:
-    # Bind socket to port and accept connections from 100 clients max
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(1.0)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind((host, port))
-    sock.listen(100)
-    print('SSH server started, listening for SSH connections')
-
-    while (True):
-      try:
-        client_sock, client_addr = sock.accept()
-        # Multithreaded
-        threading.Thread(target=handle_ssh_connection(client_sock, client_addr)).start()
-      # This is to break out of the accept() blocking function
-      except socket.timeout as e:
-        pass
-      
-  except Exception as e:
-        print('ERROR: SSH socket failed on port', port, 'with error:', e)
-        sys.exit(1)
+  def handle_ssh_connection(self, client_sock, client_addr):
+    client_version = client_sock.recv(1024).decode('ascii').rstrip()
+    print('SSH connection with address:', client_addr)
+    log(client_addr, client_version)
+    client_sock.close()
+    
+  def listen_for_connections(self, sock):
+    while True:
+      client_sock, client_addr = sock.accept()
+      threading.Thread(target=self.handle_ssh_connection, args=[client_sock, client_addr], daemon=True).start()
+        
+  # Opens tcp port and listens for connections
+  def run_pot(self):
+    host = ''
+    port = 2222
+    print("Starting SSH honeypot on port ", port, "...", sep='')
+    try:
+      # Bind socket to port and accept connections from 100 clients max
+      sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+      sock.bind((host, port))
+      sock.listen(100)
+      self.is_running = True
+      print('SSH server started, listening for SSH connections')
+      # Multithreaded
+      threading.Thread(target=self.listen_for_connections, args=[sock], daemon=True).start()
+    except Exception as e:
+          print('ERROR: SSH socket failed on port', port, 'with error:', e)
+          sys.exit(1)
 
 def main():
   try:
-    run_pot()
+    server = SshServer()
+    server.run_pot()
   except KeyboardInterrupt:
     print('Closing SSH server...')
     sys.exit(1)

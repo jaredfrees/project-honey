@@ -8,7 +8,7 @@ import os
 import socketserver
 import threading
 import http.server
-
+from common.common import HoneypotBaseServer
 
 class ThreadedHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     
@@ -51,26 +51,32 @@ def log(address, data):
     file.write(sep + '\n')
 
 
-# Opens tcp port and listens for connections
-def run_pot():
-  host = ''
-  port = 80
-  print("Starting HTTP honeypot on port ", port, '...', sep='')
+class HttpServer(HoneypotBaseServer):
+  def __init__(self):
+    HoneypotBaseServer.__init__(self, 'HTTP')
 
-  server = ThreadedHTTPServer((host, port), ThreadedHTTPRequestHandler)
-  
-  # Start a thread with the server -- that thread will then start one
-  # more thread for each request
-  print('HTTP server started')
-  server_thread = threading.Thread(target=server.serve_forever(0.5))
-  # Exit the server thread when the main thread terminates
-  server_thread.daemon = True
-  server_thread.start()
-  
+  # Opens tcp port and listens for connections
+  def run_pot(self):
+    host = ''
+    port = 80
+    print("Starting HTTP honeypot on port ", port, '...', sep='')
+
+    server = ThreadedHTTPServer((host, port), ThreadedHTTPRequestHandler)
+    
+    # Start a thread with the server -- that thread will then start one
+    # more thread for each request
+    self.is_running = True
+    print('HTTP server started')
+    server_thread = threading.Thread(target=server.serve_forever)
+    # Exit the server thread when the main thread terminates
+    server_thread.daemon = True
+    server_thread.start()
+    
 
 def main():
   try:
-    run_pot()
+    server = HttpServer()
+    server.run_pot()
   except KeyboardInterrupt:
     print('Closing HTTP server...')
     sys.exit(1)

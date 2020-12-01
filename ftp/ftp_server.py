@@ -22,41 +22,51 @@ from pyftpdlib.servers import ThreadedFTPServer
 import configparser
 import logging
 import sys
+import threading
+from common.common import HoneypotBaseServer
 
-def run_pot():
-  # Get config
-  config = configparser.ConfigParser()
-  config.read('./ftp/config.ini')
-  section = 'DEFAULT'
-  FTP_PORT = config[section]['ftp_port']
-  FTP_USER = config[section]['ftp_user']
-  FTP_PASSWORD = config[section]['ftp_password']
-  FTP_DIR = config[section]['ftp_directory']
-  ####################
-  
-  print("Starting FTP honeypot on port ", FTP_PORT, '...', sep='')
-  authorizer = DummyAuthorizer()
-  authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_DIR, perm="elradfmw")
-  authorizer.add_anonymous(FTP_DIR, perm="elr")
+class FtpServer(HoneypotBaseServer):
 
-  handler = FTPHandler
-  handler.authorizer = authorizer
-  #handler.log_prefix = 'XXX [%(username)s]@%(remote_ip)s'
+  def __init__(self):
+    HoneypotBaseServer.__init__(self, 'FTP')
 
-  handler.banner = "Welcome to the FTP Server :)"
+  def run_pot(self):
+    # Get config
+    config = configparser.ConfigParser()
+    config.read('./ftp/config.ini')
+    section = 'DEFAULT'
+    FTP_PORT = config[section]['ftp_port']
+    FTP_USER = config[section]['ftp_user']
+    FTP_PASSWORD = config[section]['ftp_password']
+    FTP_DIR = config[section]['ftp_directory']
+    ####################
+    
+    print("Starting FTP honeypot on port ", FTP_PORT, '...', sep='')
+    authorizer = DummyAuthorizer()
+    authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_DIR, perm="elradfmw")
+    authorizer.add_anonymous(FTP_DIR, perm="elr")
 
-  logging.basicConfig(filename='./ftp/logs/ftp.log', level=logging.DEBUG)
+    handler = FTPHandler
+    handler.authorizer = authorizer
+    #handler.log_prefix = 'XXX [%(username)s]@%(remote_ip)s'
 
-  server = ThreadedFTPServer(('127.0.0.1', FTP_PORT), handler)
-  server.max_cons = 10
-  server.max_cons_per_ip = 5
+    handler.banner = "Welcome to the FTP Server :)"
 
-  print('FTP server started')
-  server.serve_forever()
+    logging.basicConfig(filename='./ftp/logs/ftp.log', level=logging.DEBUG)
+
+    server = ThreadedFTPServer(('127.0.0.1', FTP_PORT), handler)
+    server.max_cons = 10
+    server.max_cons_per_ip = 5
+
+    self.is_running = True
+    print('FTP server started')
+    server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+    server_thread.start()
   
 def main():
   try:
-    run_pot()
+    server = FtpServer()
+    server.run_pot()
   except KeyboardInterrupt:
     print('Closing FTP server...')
     sys.exit(1)
