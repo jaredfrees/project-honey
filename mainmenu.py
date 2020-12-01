@@ -1,11 +1,10 @@
 #Author: Brian Fissel
 import importlib
 
-from project-honey.ftp import ftp_server
-from project-honey.http import http_server
-from project-honey.smtp import smtp_server
-from project-honey.tcp import tcp_server
-from project-honey.ssh import ssh_server
+#import ftp.ftp_server
+import httpServer.http_server
+import tcp.tcp_honeypot
+import ssh.ssh_server
 
 def main():
     print("Welcome to our Honeypot!")
@@ -18,15 +17,18 @@ def main():
     choice = input("Please Select an Option by Typing in a Number and Pressing Enter: ")
     choice = int(choice)
     if choice == 1:
-        execfile('ftp_server.py')
+        #ftp.ftp_server
+        #I am getting an error reading the ftp_port, check that, might need to put ftp in a main method.
+        print("FTP")
     elif choice == 2:
-        execfile('tcp_server.py')
+        tcp.tcp_honeypot.main()
     elif choice == 3:
-        execfile('http_server.py')
+        httpServer.http_server.main()
     elif choice == 4:
         execfile('smtp_server.py') #this file isn't in master yet, still on own branch
+        #Just do what I did for other files when it is branched in
     elif choice == 5:
-        execfile('ssh_server.py')
+        ssh.ssh_server.main()
     else:
         print("Not a valid Selection")
         main()

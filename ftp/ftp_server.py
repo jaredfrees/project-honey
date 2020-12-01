@@ -24,7 +24,7 @@ import logging
 
 # Get config
 config = configparser.ConfigParser()
-config.read('./ftp/config.ini')
+config.read('./config.ini')
 section = 'DEFAULT'
 FTP_PORT = config[section]['ftp_port']
 FTP_USER = config[section]['ftp_user']
