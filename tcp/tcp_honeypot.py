@@ -7,7 +7,6 @@ import time
 import os
 import socketserver
 import threading
-#TODO for future maybe make multithreaded, on-blocking sockets?
 
 class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
