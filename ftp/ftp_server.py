@@ -21,33 +21,45 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import ThreadedFTPServer
 import configparser
 import logging
+import sys
 
-# Get config
-config = configparser.ConfigParser()
-config.read('./config.ini')
-section = 'DEFAULT'
-FTP_PORT = config[section]['ftp_port']
-FTP_USER = config[section]['ftp_user']
-FTP_PASSWORD = config[section]['ftp_password']
-FTP_DIR = config[section]['ftp_directory']
-####################
+def run_pot():
+  # Get config
+  config = configparser.ConfigParser()
+  config.read('./ftp/config.ini')
+  section = 'DEFAULT'
+  FTP_PORT = config[section]['ftp_port']
+  FTP_USER = config[section]['ftp_user']
+  FTP_PASSWORD = config[section]['ftp_password']
+  FTP_DIR = config[section]['ftp_directory']
+  ####################
+  
+  print("Starting FTP honeypot on port ", FTP_PORT, '...', sep='')
+  authorizer = DummyAuthorizer()
+  authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_DIR, perm="elradfmw")
+  authorizer.add_anonymous(FTP_DIR, perm="elr")
 
+  handler = FTPHandler
+  handler.authorizer = authorizer
+  #handler.log_prefix = 'XXX [%(username)s]@%(remote_ip)s'
 
-authorizer = DummyAuthorizer()
-authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_DIR, perm="elradfmw")
-authorizer.add_anonymous(FTP_DIR, perm="elr")
+  handler.banner = "Welcome to the FTP Server :)"
 
-handler = FTPHandler
-handler.authorizer = authorizer
-#handler.log_prefix = 'XXX [%(username)s]@%(remote_ip)s'
+  logging.basicConfig(filename='./ftp/logs/ftp.log', level=logging.DEBUG)
 
-handler.banner = "Welcome to the FTP Server :)"
+  server = ThreadedFTPServer(('127.0.0.1', FTP_PORT), handler)
+  server.max_cons = 10
+  server.max_cons_per_ip = 5
 
-logging.basicConfig(filename='./ftp/logs/ftp.log', level=logging.DEBUG)
+  print('FTP server started')
+  server.serve_forever()
+  
+def main():
+  try:
+    run_pot()
+  except KeyboardInterrupt:
+    print('Closing FTP server...')
+    sys.exit(1)
 
-server = ThreadedFTPServer(('127.0.0.1', FTP_PORT), handler)
-server.max_cons = 10
-server.max_cons_per_ip = 5
-
-server.serve_forever()
-
+if __name__ == '__main__':
+  main()

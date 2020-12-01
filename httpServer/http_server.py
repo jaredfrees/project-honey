@@ -16,7 +16,7 @@ class ThreadedHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        file = open("./http/HomePage.html", "r")
+        file = open("./httpServer/HomePage.html", "r")
         self.wfile.write(bytes(file.read(), "utf-8"))
         address = self.client_address
         data = "GET request version: " + self.request_version
@@ -35,7 +35,7 @@ class ThreadedHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
       post_data = self.rfile.read(content_length)
       post_data = "Data: " + post_data.decode("utf-8")
       data = "POST request version: " + self.request_version + "\nUser-Agent: " + self.headers['User-Agent'] + "\n"
-      file = open("./http/HomePage.html", "r")
+      file = open("./httpServer/HomePage.html", "r")
       self.wfile.write(bytes(file.read(), "utf-8"))
       address = self.client_address
       log(address, data + post_data)
@@ -46,36 +46,33 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 def log(address, data):
   sep = '-' * 50
-  with open('./http/logs/http.log', 'a') as file:
-    file.write('Time: {}\nIP: {}\nPort: {}\nRequest: {}\n'.format(time.ctime(), address[0], address[1], data))
+  with open('./httpServer/logs/http.log', 'a') as file:
+    file.write('Time: {}\nAddress: {}:{}\nRequest: {}\n'.format(time.ctime(), address[0], address[1], data))
     file.write(sep + '\n')
 
 
 # Opens tcp port and listens for connections
 def run_pot():
-  print("Starting http honeypot...")
   host = ''
   port = 80
-
-  #server = http.server.HTTPServer((host, port), ThreadedHTTPRequestHandler)
+  print("Starting HTTP honeypot on port ", port, '...', sep='')
 
   server = ThreadedHTTPServer((host, port), ThreadedHTTPRequestHandler)
-  ip, port = server.server_address
   
-  #server.serve_forever()
-
   # Start a thread with the server -- that thread will then start one
   # more thread for each request
+  print('HTTP server started')
   server_thread = threading.Thread(target=server.serve_forever(0.5))
   # Exit the server thread when the main thread terminates
   server_thread.daemon = True
   server_thread.start()
   
+
 def main():
   try:
     run_pot()
   except KeyboardInterrupt:
-    print('Exiting server')
+    print('Closing HTTP server...')
     sys.exit(1)
 
 if __name__ == '__main__':
