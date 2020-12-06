@@ -1,6 +1,6 @@
 # Project Honey
 
-To run the program you will need to install pyftpdlib which can be done with the command: pip3 install pyftpdlib<br/>
+To run the program you will need to install pyftpdlib which can be done with the command: `pip3 install pyftpdlib`<br/>
 Run program: `python .\main_menu.py`<br/>
 After running you can then select which type of server you would like to run.<br/>
 After selecting the server is now running and you can interact with it.<br/>
