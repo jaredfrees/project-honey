@@ -1,6 +1,6 @@
 # Project Honey
 
-If you run `python .\tcp_honeypot.py` then `python .\test_client.py` you should see some output.
+Run program: `python .\main_menu.py`
 
 
 <br/><br/>

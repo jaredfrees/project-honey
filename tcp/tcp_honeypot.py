@@ -14,7 +14,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # Get initial connection
         address = self.client_address
-        log(address, '')
+        data = ''
+        log(address, data)
 
         # Send response
         cur_thread = threading.current_thread()
@@ -24,7 +25,10 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         self.request.sendall(b)
 
         # Look for response
-        data = self.request.recv(1024).decode('utf-8').rstrip()
+        try:
+          data = self.request.recv(1024).decode('utf-8').rstrip()
+        except (socket.error, socket.timeout):
+          pass
         log(address, data)
                        
 
