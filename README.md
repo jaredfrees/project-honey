@@ -1,9 +1,13 @@
 # Project Honey
-<br/>
 Team members: Jared Frees, Zach Cusick, Brian Fissel
-<br/>
+<br/></br>
 
 ### Documentation
+##### Requirements:
+* Python version 3
+* pyftpdlib
+
+##### Notes:
 * To run the program you will need to install pyftpdlib which can be done with the command: `pip3 install pyftpdlib`<br/>
 * Run program: `python .\main_menu.py`<br/>
 * After running you can then select which type of server you would like to run by typing the specified number.<br/>
