@@ -1,6 +1,10 @@
 # Project Honey
 
 Run program: `python .\main_menu.py`
+After running you can then select which type of server you would like to run.
+After selecting the server is now running and you can interact with it.
+The TCP connection is on port 25565, the SSH is on port 2222, the FTP is port 21, and the HTTP is on port 80
+Each server has how you can test it at the top of the file, some are command line inputs or other actions such as opening your browser to test these servers.
 
 
 <br/><br/>
