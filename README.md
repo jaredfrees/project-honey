@@ -8,6 +8,7 @@ Team members: Jared Frees, Zach Cusick, Brian Fissel
 * pyftpdlib
 
 ##### Notes:
+* If on Ubuntu: You need to run both pip and python as with sudo because the program uses reserved ports for HTTP and FTP.
 * To run the program you will need to install pyftpdlib which can be done with the command: `pip3 install pyftpdlib`<br/>
 * Run program: `python .\main_menu.py`<br/>
 * After running you can then select which type of server you would like to run by typing the specified number.<br/>
